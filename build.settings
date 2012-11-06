@@ -1,0 +1,17 @@
+-- build.settings for project: HexPathFinding
+-- Managed with http://CoronaProjectManager.com
+-- Copyright 2012 Mario Roberti. All Rights Reserved.
+
+settings = {
+	orientation =
+	{
+		--default = "landscapeRight",
+	},
+	iphone =
+	{
+		plist=
+		{
+			--UIStatusBarHidden=true,
+		},
+	},
+}

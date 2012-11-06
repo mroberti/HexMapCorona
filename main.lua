@@ -55,26 +55,26 @@ gameBoard.yScale = 0.5
 -- we're using a table of just numbers for our 
 -- map.
 local map = {
-{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-{1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
-{1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
-{1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1},
-{1,1,1,1,0,0,1,0,0,1,1,1,1,1,0,0,1,0,0,1},
-{1,0,0,1,0,0,1,0,0,1,1,0,0,1,0,0,1,0,0,1},
-{1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1},
-{1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
-{1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
-{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-{1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
-{1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
-{1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1},
-{1,1,1,1,0,0,1,0,0,1,1,1,1,1,0,0,1,0,0,1},
-{1,0,0,1,0,0,1,0,0,1,1,0,0,1,0,0,1,0,0,1},
-{1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1},
-{1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
-{1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
-{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+     {1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
+     {1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
+     {1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1},
+     {1,1,1,1,0,0,1,0,0,1,1,1,1,1,0,0,1,0,0,1},
+     {1,0,0,1,0,0,1,0,0,1,1,0,0,1,0,0,1,0,0,1},
+     {1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1},
+     {1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
+     {1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
+     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+     {1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
+     {1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
+     {1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1},
+     {1,1,1,1,0,0,1,0,0,1,1,1,1,1,0,0,1,0,0,1},
+     {1,0,0,1,0,0,1,0,0,1,1,0,0,1,0,0,1,0,0,1},
+     {1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1},
+     {1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
+     {1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
+     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 }
 
 -- Create a temporary blue circle to represent
@@ -101,7 +101,7 @@ if(results~=nil)then
 		-- Insert our x and y values into the table 'tempPath'
 		table.insert(tempPath,tempPoint)
 	end
-
+     
 	-- print out our path's solution coordinates
 	-- for i=1,#tempPath do
 	-- 	print("Finished steps "..tempPath[i].x,tempPath[i].y)
@@ -154,28 +154,28 @@ movingRectangle:setReferencePoint(display.TopLeftReferencePoint)
 
 -- touch listener function
 function movingRectangle:touch( event )
-    if event.phase == "began" then
-        self.markX = self.x    -- store x location of object
-        self.markY = self.y    -- store y location of object
-    elseif event.phase == "moved" then
-        local x = (event.x - event.xStart) + self.markX
-        local y = (event.y - event.yStart) + self.markY
-        self.x, self.y = x, y    -- move object based on calculations above
-        -- OK, we've moved our little shite rectangle, so
-        -- let's move our group too.
-        gameBoard.x = self.x
-        gameBoard.y = self.y
-    end
-    
-    -- Check this out, normally you'd leave the
-    -- 'return true' in there to prevent 'click through';
-    -- where you can click two objects at the same 
-    -- time, which usually ISN'T what you want...but
-    -- in this case, we DO want it so you can drag the
-    -- rectangle around (which in turn we'll use to set
-    -- the gameBoard group's x and y coordinate with)
-
-    --return true
+     if event.phase == "began" then
+          self.markX = self.x    -- store x location of object
+          self.markY = self.y    -- store y location of object
+     elseif event.phase == "moved" then
+          local x = (event.x - event.xStart) + self.markX
+          local y = (event.y - event.yStart) + self.markY
+          self.x, self.y = x, y    -- move object based on calculations above
+          -- OK, we've moved our little shite rectangle, so
+          -- let's move our group too.
+          gameBoard.x = self.x
+          gameBoard.y = self.y
+     end
+     
+     -- Check this out, normally you'd leave the
+     -- 'return true' in there to prevent 'click through';
+     -- where you can click two objects at the same 
+     -- time, which usually ISN'T what you want...but
+     -- in this case, we DO want it so you can drag the
+     -- rectangle around (which in turn we'll use to set
+     -- the gameBoard group's x and y coordinate with)
+     
+     --return true
 end
 
 -- make 'movingRectangle' listen for touch events
@@ -186,13 +186,13 @@ local function GetRiseOverRun(source,target)
 	local rise
 	local run
 	run = source.x - target.x
-
+     
 	if(source.x==target.x)then
 		run = 0		
 	end
 	
 	rise = source.y - target.y
-
+     
 	if(source.y==target.y)then
 		rise = 0				
 	end
@@ -221,7 +221,7 @@ local function SolvePath(sourceX,sourceY,targetX,targetY)
 			-- Insert our x and y values into the table 'tempPath'
 			table.insert(tempPath,tempPoint)
 		end
-	
+          
 		for i=1,#tempPath do
 			local x = tempPath[i].x
 			local y = tempPath[i].y
@@ -238,7 +238,7 @@ local function SolvePath(sourceX,sourceY,targetX,targetY)
 				oldY = y
 			end
 		end
-
+          
 		print("tempPath "..#tempPath)
 		-- print out our path's solution coordinates
 		-- for i=1,#tempPath do
@@ -285,18 +285,18 @@ for y=1,mapHeight do
 		myMap[y][x] = {}
 		-- We'll assign the variable 'value' a text value so we can parse
 		-- it later on
-		
+               
 		local scale = 6.50
 		
 		local fileName = ""
 		local tempValue = map[y][x] -- This will go to the 'xth' place in the string and give us the character at 'x'
 		if(tempValue==0)then
 			myMap[y][x].value = "0"
-			fileName="ocean.png"
+			fileName="wall.jpg"
 			myMap[y][x].graphic = display.newImage(fileName)
 		elseif(tempValue==1) then
 			myMap[y][x].value = "1"	
-			fileName="grass.png"
+			fileName="floor.jpg"
 			myMap[y][x].graphic = display.newImage(fileName)
 		else
 			-- myMap[y][x].value = "2"	
@@ -305,7 +305,7 @@ for y=1,mapHeight do
 		-- We'll assign the variable 'graphic' a newImage value
 		-- and we're loading from the fileName selected above
 		-- depending on which random number we picked
-
+          
 		-- Let's name the graphic to return a name when
 		-- it's clicked!
 		myMap[y][x].graphic.name = x..","..y
@@ -321,15 +321,18 @@ for y=1,mapHeight do
 		-- Handle the offset by using modulo to determine
 		-- if we're on an even or odd column, and adjust the
 		-- spacing accordingly
-		if math.mod(x, 2) == 0 then
-			--print("even")
-			myMap[y][x].graphic.x = x*xOffset
-			myMap[y][x].graphic.y = (y * yOffset)
-		else
-			--print("odd")
-			myMap[y][x].graphic.x = x*xOffset
-			myMap[y][x].graphic.y = (y * yOffset) - (yOffset / 2)
-		end
+          --		if math.mod(x, 2) == 0 then
+          --			--print("even")
+          --			myMap[y][x].graphic.x = x*xOffset
+          --			myMap[y][x].graphic.y = (y * yOffset)
+          --		else
+          --			--print("odd")
+          --			myMap[y][x].graphic.x = x*xOffset
+          --			myMap[y][x].graphic.y = (y * yOffset) - (yOffset / 2)
+          --		end
+          myMap[y][x].graphic.x = x*xOffset
+          myMap[y][x].graphic.y = (y * yOffset)
+          
 		-- For debugging, let's add a text with coordinates
 		local tempText = display.newText(gameBoard,myMap[y][x].graphic.name, myMap[y][x].graphic.x-40, myMap[y][x].graphic.y-12, nil, 32)
 		
