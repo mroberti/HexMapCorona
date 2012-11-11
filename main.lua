@@ -1,30 +1,28 @@
---
--- Project: HexBlog
--- Description: 
---
--- Version: 1.0
--- Managed with http://CoronaProjectManager.com
---
--- Copyright 2011 Mario Roberti. All Rights Reserved.
--- 
+-- Some handy variables for spacing and width, etc. on different devices
+screenW = display.contentWidth
+screenH = display.contentHeight
+centerX  = display.contentWidth/2
+centerY = display.contentHeight/2
 
-debugTextGroup = display.newGroup()
-debugTextGroup.x = 100
-debugTextGroup.y = 900
-local tempRect = display.newRect(-100,-25,1000,300)
+local widget = require("widget")
+-- We'll maek a GUI group to insert our debug
+-- stuff into....
+GUILayer = display.newGroup()
+-- Make a background rectangle to put the debugText over
+-- for easy viewing
+local tempRect = display.newRect(0,0,screenW,100)
 tempRect:setFillColor(0,0,0)
-debugTextGroup:insert(tempRect)
-local debugText = display.newText(debugTextGroup,"Test Debug", 100, 0, nil, 12)
-
-debugText:setReferencePoint(display.TopLeftReferencePoint)
 
 -- Our offsets for when faking our hex map...
 local yOffset = 115
 local xOffset = 98
 
+-- For some path tracing stuff we're doing later
 local oldX = 1 -- For our puroses, set the oldX and 
 local oldY = 1 -- oldY values to 1,1 on our map...
 
+-- Mapstyle for if we're doing hex or tile based map
+local hexMapStyle = false
 
 -- The fabulous Jumper library for pathfinding on our grid. 
 -- http://developer.coronalabs.com/code/Jumper-fast-2d-pathfinder-grid-based-games
@@ -41,6 +39,16 @@ local Jumper = require("Jumper")
 local gameBoard = display.newGroup()
 gameBoard.xScale = 0.5
 gameBoard.yScale = 0.5
+
+-- Create a temporary blue circle to represent
+-- our player....just for fun...you could make it
+-- a graphic too.
+local tempPlayer = display.newCircle( 0, 0, 50)
+tempPlayer:setFillColor(0,0,255)
+
+-- Insert the tempPlayer circle into our
+-- display group: gameBoard
+gameBoard:insert(tempPlayer)
 
 -- Different from our previous hex map examples
 -- we're using a table of just numbers for our 
@@ -67,16 +75,6 @@ local map = {
      {1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,1,0,0,1},
      {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 }
-
--- Create a temporary blue circle to represent
--- our player....just for fun...
-local tempPlayer = display.newCircle( 0, 0, 50)
-tempPlayer:setFillColor(0,0,255)    
-
--- Insert the tempPlayer circle into our
--- display group: gameBoard
-
-gameBoard:insert(tempPlayer)
 
 local walkable = 1
 local allowDiagonal = false
@@ -144,6 +142,8 @@ movingRectangle:addEventListener( "touch", movingRectangle )
 
 local function SolvePath(sourceX,sourceY,targetX,targetY)
      -- Let's make all the tiles normal color now
+     -- This is a strictly graphical change and not
+     -- needed for the actual path solution.
      for y=1,mapHeight do
           for x=1,mapWidth do
                -- Make all tiles full alpha
@@ -152,9 +152,10 @@ local function SolvePath(sourceX,sourceY,targetX,targetY)
           end
      end
      
+     -- Call the jumper lib and request a solution from the source to the target...
      local results = pather:getPath(sourceX,sourceY,targetX,targetY)
+     -- If results aren't nil....
      if(results)then
-          debugText.text = ""
           local tempPath = {}
           local iteration = 1
           
@@ -187,15 +188,9 @@ local function SolvePath(sourceX,sourceY,targetX,targetY)
           -- for i=1,#tempPath do
           -- 	print("Finished steps "..tempPath[i].x,tempPath[i].y)
           -- end
-          debugText.text = debugText.text.."Rad! Solution for path "..sourceX..","..sourceY.." "..targetX..","..targetY.." found!"
-          debugText:setReferencePoint(display.CenterLeftReferencePoint)
      else
-          debugText.text = debugText.text.."No solution for path "..sourceX..","..sourceY.." "..targetX..","..targetY.."\n"
+          -- OK we didn't get a solution so do whatever...
           print("No solution for path "..sourceX..","..sourceY.." "..targetX..","..targetY)
-          debugText:setReferencePoint(display.CenterLeftReferencePoint)
-          -- Hmmmmm, here we should make the player
-          -- move randomly in the hopes that it will
-          -- land in another area where it CAN find a solution....
      end
      return results
 end
@@ -211,6 +206,8 @@ local function ClickHandler(event)
                tempPlayer.y = oldY * yOffset
                tempPlayer:toFront()          
           else
+               -- Seems this is needed if we click on an invalid
+               -- target piece of the map.
                local tempResults = SolvePath(oldX,oldY,oldX,oldY)
           end
      end
@@ -218,6 +215,7 @@ local function ClickHandler(event)
 end 
 
 function CreateGraphicMap(passedMap)
+     print("Creating graphic map!")
      local myMap = {}
      for y=1,mapHeight do
           myMap[y] = {}     -- create a new row
@@ -234,15 +232,20 @@ function CreateGraphicMap(passedMap)
                local tempValue = passedMap[y][x] -- This will go to the 'xth' place in the string and give us the character at 'x'
                if(tempValue==0)then
                     myMap[y][x].value = "0"
-                    fileName="wall.jpg"
+                    if(hexMapStyle)then
+                         fileName = "ocean.png"
+                    else
+                         fileName="wall.jpg"
+                    end
                     myMap[y][x].graphic = display.newImage(fileName)
                elseif(tempValue==1) then
                     myMap[y][x].value = "1"	
-                    fileName="floor.jpg"
+                    if(hexMapStyle)then
+                         fileName = "grass.png"
+                    else
+                         fileName="floor.jpg"
+                    end
                     myMap[y][x].graphic = display.newImage(fileName)
-               else
-                    -- myMap[y][x].value = "2"	
-                    -- fileName="desert.png"
                end		
                -- We'll assign the variable 'graphic' a newImage value
                -- and we're loading from the fileName selected above
@@ -263,21 +266,20 @@ function CreateGraphicMap(passedMap)
                -- Handle the offset by using modulo to determine
                -- if we're on an even or odd column, and adjust the
                -- spacing accordingly
-               --		if math.mod(x, 2) == 0 then
-               --			--print("even")
-               --			myMap[y][x].graphic.x = x*xOffset
-               --			myMap[y][x].graphic.y = (y * yOffset)
-               --		else
-               --			--print("odd")
-               --			myMap[y][x].graphic.x = x*xOffset
-               --			myMap[y][x].graphic.y = (y * yOffset) - (yOffset / 2)
-               --		end
-               myMap[y][x].graphic.x = x*xOffset
-               myMap[y][x].graphic.y = (y * yOffset)
-               
-               -- For debugging, let's add a text with coordinates
-               local tempText = display.newText(gameBoard,myMap[y][x].graphic.name, myMap[y][x].graphic.x-40, myMap[y][x].graphic.y-12, nil, 32)
-               
+               if(hexMapStyle==true)then
+                    if math.mod(x, 2) == 0 then
+                         --print("even")
+                         myMap[y][x].graphic.x = x*xOffset
+                         myMap[y][x].graphic.y = (y * yOffset)
+                    else
+                         --print("odd")
+                         myMap[y][x].graphic.x = x*xOffset
+                         myMap[y][x].graphic.y = (y * yOffset) - (yOffset / 2)
+                    end
+               else
+                    myMap[y][x].graphic.x = x*xOffset
+                    myMap[y][x].graphic.y = (y * yOffset)
+               end
           end
      end
      return myMap
@@ -288,16 +290,56 @@ end
 -- touch events, other values, etc.
 myMap = CreateGraphicMap(map)
 
+GUILayer:toFront()
 
 local function ClearMap(passedMap)
-     passedMap = {}
      for y=1,mapHeight do
-          passedMap[y] = {}     -- create a new row
           for x=1,mapWidth do
+               passedMap[y][x].graphic:removeEventListener("touch", ClickHandler )
                display.remove(passedMap[y][x].graphic)
-               myMap[y][x].graphic = nil
+               passedMap[y][x].graphic = nil
           end
      end
 end
 
-debugTextGroup:toFront()
+local function testButtonHandler(event) 
+     -- 	event.phase is a string identifying where in the touch sequence the event occurred:
+     -- "began" a finger touched the screen.
+     -- "moved" a finger moved on the screen.
+     -- "ended" a finger was lifted from the screen.
+     -- "cancelled" the system cancelled tracking of the touch.
+     print(event.name.." occurred") 
+     if hexMapStyle then
+          hexMapStyle = false
+          ClearMap(myMap)
+          myMap = CreateGraphicMap(map)
+          oldX = 1
+          oldY = 1
+          tempPlayer.x = myMap[1][1].graphic.x
+          tempPlayer.y = myMap[1][1].graphic.y
+     else
+          hexMapStyle = true
+          ClearMap(myMap)
+          myMap = CreateGraphicMap(map)
+          oldX = 1
+          oldY = 1
+          tempPlayer.x = myMap[1][1].graphic.x
+          tempPlayer.y = myMap[1][1].graphic.y
+     end
+     return true 
+end
+
+widget.newButton{
+	id = "id",
+	x = centerX,
+	y = screenH,
+	label = "Switch Hex/2D",
+	font = nil,
+	onRelease = testButtonHandler,
+	emboss = true,
+	offset = offset,
+     --	default = default image,
+     --	over = over image,
+	buttonTheme = "blue",
+}
+
