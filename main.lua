@@ -329,17 +329,18 @@ local function testButtonHandler(event)
      return true 
 end
 
-widget.newButton{
+local testButton = widget.newButton{
 	id = "id",
-	x = centerX,
-	y = screenH,
 	label = "Switch Hex/2D",
 	font = nil,
 	onRelease = testButtonHandler,
 	emboss = true,
 	offset = offset,
-     --	default = default image,
-     --	over = over image,
+     	default = "buttonNormal2.png",
+     	over =  "buttonOver2.png",
 	buttonTheme = "blue",
 }
+
+testButton.x = centerX
+testButton.y = screenH - testButton.contentHeight*2
 
